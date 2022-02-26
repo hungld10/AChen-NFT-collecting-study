@@ -580,5 +580,5 @@ export const abi = [
       "stateMutability": "payable",
       "type": "receive"
     }
-  ]
-export const NFT_CONTRACT_ADDRESS = "0x977A1c66280acBbDbF8196944012534E548018c6"
+  ];
+export const NFT_CONTRACT_ADDRESS = "0x977A1c66280acBbDbF8196944012534E548018c6";

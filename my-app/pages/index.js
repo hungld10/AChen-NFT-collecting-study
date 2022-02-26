@@ -21,7 +21,7 @@ export default function Home() {
     const web3Provider = new providers.Web3Provider(provider);
 
     const { chainId } = await web3Provider.getNetwork();
-    if ( chainId != 4 ) {
+    if (chainId !== 4) {
       window.alert("Change the network to Rinkeby");
       throw new Error("Change network to Rinkeby");
     }
@@ -142,6 +142,7 @@ export default function Home() {
       return _presaleStarted;
     } catch (err) {
       console.error(err);
+      return false;
     }
   }
 
@@ -169,6 +170,7 @@ export default function Home() {
       return hasEnded;
     } catch (err) {
       console.error(err);
+      return false;
     }
   }
 
@@ -215,38 +217,6 @@ export default function Home() {
       console.error(err);
     }
   }
-
-  useEffect(() => {
-    if (!walletConnected) {
-      web3ModalRef.current = new Web3Modal({
-        network: "rinkeby",
-        providerOptions: {},
-        disableInjectedProvider: false,
-      });
-      connectWallet();
-
-      const _presaleStarted = checkIfPresaleStarted();
-      if (_presaleStarted) {
-        checkIfPresaleEnded();
-      }
-
-      getTokenIdsMinted();
-
-      const presaleEndedInterval = setInterval(async function () {
-        const _presaleStarted = checkIfPresaleStarted();
-        if (_presaleStarted) {
-          const _presaleEnded = checkIfPresaleEnded();
-          if (_presaleEnded) {
-            clearInterval(presaleEndedInterval);
-          }
-        }
-      }, 5 * 1000);
-
-      setInterval(async function () {
-        await getTokenIdsMinted();
-      }, 5 * 1000);
-    }
-  }, [walletConnected]);
 
   /*
     renderButton: Returns a button based on the state of the dapp
@@ -301,13 +271,45 @@ export default function Home() {
         </button>
       );
     }
-  }
+  };
+
+  useEffect(() => {
+    if (!walletConnected) {
+      web3ModalRef.current = new Web3Modal({
+        network: "rinkeby",
+        providerOptions: {},
+        disableInjectedProvider: false,
+      });
+      connectWallet();
+
+      const _presaleStarted = checkIfPresaleStarted();
+      if (_presaleStarted) {
+        checkIfPresaleEnded();
+      }
+
+      getTokenIdsMinted();
+
+      const presaleEndedInterval = setInterval(async function () {
+        const _presaleStarted = await checkIfPresaleStarted();
+        if (_presaleStarted) {
+          const _presaleEnded = await checkIfPresaleEnded();
+          if (_presaleEnded) {
+            clearInterval(presaleEndedInterval);
+          }
+        }
+      }, 5 * 1000);
+
+      setInterval(async function () {
+        await getTokenIdsMinted();
+      }, 5 * 1000);
+    }
+  }, [walletConnected]);
 
   return (
     <div>
       <Head>
         <title>Chicken NFT Collecting</title>
-        <meta name="description" content="Whitelist-Dapp" />
+        <meta name="description" content="NFT-Collecting-Dapp" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.main}>
@@ -322,7 +324,7 @@ export default function Home() {
           {renderButton()}
         </div>
         <div>
-          <img className={styles.image} src="./cryptodevs/0.svg" />
+          <img className={styles.image} src="./collecting/0.svg" />
         </div>
       </div>
 
@@ -330,5 +332,5 @@ export default function Home() {
         Made with &#10084; by Hung Le
       </footer>
     </div>
-  )
+  );
 }
